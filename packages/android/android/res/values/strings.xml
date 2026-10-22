@@ -1,0 +1,1 @@
+<resources><string name="phone_control_description">经你为当前会话开启全设备控制后，G code 可以查看可启动应用，跨应用读取当前页面和截图，点击、长按、输入、滑动，并操作桌面、返回、多任务、通知及快捷设置。页面及截图会发送给你配置的 AI 服务。每次 15 分钟或 300 步；悬浮按钮、通知和应用内均可停止。不能绕过锁屏或应用保护；最终付款、下单、密码及系统授权由你操作。</string><string name="phone_control_label">G code 手机控制</string></resources>

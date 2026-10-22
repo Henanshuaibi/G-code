@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content"><meta name="color-scheme" content="light dark"><title>G code</title><link rel="stylesheet" href="style.css"></head>
+<body>
+<div id="app">
+<header><button id="menu" class="icon" aria-label="打开菜单">☰</button><div class="brand"><strong>G code</strong><span id="projectLabel">手机工作区</span></div><button id="newSession" class="icon" aria-label="新会话">＋</button></header>
+<nav class="tabs"><button data-tab="chat" class="selected">对话</button><button data-tab="files">文件</button><button data-tab="media">创作</button><button data-tab="changes">修改<span id="changeCount"></span></button></nav>
+<div class="status"><i id="statusDot"></i><span id="engineStatus">正在连接本地引擎…</span><button id="modelButton">选择模型</button><button id="apiButton">API 设置</button></div>
+<div class="usageBar"><button id="usageButton">会话用量</button></div>
+<main id="timeline" aria-live="polite"></main>
+<div id="phoneBar" class="phoneBar" hidden><span id="phoneLabel"></span><button id="phoneHalt">停止控制</button></div>
+<div id="attachmentStatus" role="status" aria-live="polite" hidden></div><div id="attachmentList"></div>
+<div id="composer"><button id="addAttachment" class="icon" aria-label="添加附件或创建图片视频">＋</button><textarea id="input" rows="1" placeholder="描述你想做的修改…" aria-label="消息内容"></textarea><button id="send" class="primary">发送</button></div>
+<footer>G code · 基于 OpenCode</footer>
+</div>
+<div id="drawerShade" class="shade"></div><aside id="drawer"><div class="drawerHead"><strong>G code</strong><button id="closeDrawer" class="icon" aria-label="收起菜单">‹</button></div><p class="muted">你的项目，在手机上接着做。</p><button id="chooseProject">切换项目</button><button id="createProject">＋ 新建项目</button><button id="settings">API 设置</button><button id="chatgptAccount">ChatGPT 账号</button><button id="appearance">外观与界面</button><button id="phoneControl">手机控制</button><button id="taskRecovery">任务状态与恢复</button><div class="sectionLabel">会话</div><button id="batchSessions">批量删除对话</button><div id="sessionList"></div><button id="about">关于与当前能力</button></aside>
+<div id="sheetShade" class="shade"></div><section id="sheet" role="dialog" aria-modal="true"><div id="grip" aria-label="向下拖动关闭"></div><div class="sheetHead"><h2 id="sheetTitle"></h2><button id="closeSheet" class="icon" aria-label="关闭面板">×</button></div><div id="sheetBody"></div></section>
+<div id="toast" role="status"></div><script type="module" src="app.js"></script>
+</body></html>

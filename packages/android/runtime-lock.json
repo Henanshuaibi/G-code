@@ -1,0 +1,63 @@
+{
+  "node": "26.3.1",
+  "platform": "android",
+  "abi": "arm64-v8a",
+  "minSdk": 30,
+  "files": [
+    {
+      "file": "libnode-runtime.so",
+      "sha256": "8863673dc94bfb6006c1e7b14ac49ffd68aaa02c107f448912258227d6b1906f",
+      "bytes": 47798128
+    },
+    {
+      "file": "libz.so",
+      "sha256": "3d73527043f255188b28c9e5b75bbef9fb478471eb7490cbb3bcabebbfa75d33",
+      "bytes": 72232
+    },
+    {
+      "file": "libcares.so",
+      "sha256": "6d903db52e53200848cfb61e80ac3dae81abc9845c744c62fac0f93b75b78196",
+      "bytes": 251480
+    },
+    {
+      "file": "libsqlite3.so",
+      "sha256": "8b570051b4165eba48edd747ab3ac73d7c10fea40e6b27199446b590a6eb651f",
+      "bytes": 1177128
+    },
+    {
+      "file": "libffi.so",
+      "sha256": "5bb1a4a66dc058f36718060904347692ae7f6249285c164a64c7bca059fb742b",
+      "bytes": 86144
+    },
+    {
+      "file": "libcrypto.so",
+      "sha256": "3652c8f136b217811f3021eec52569405ec69ed1970499babfde9c0f7e7a1386",
+      "bytes": 4611704
+    },
+    {
+      "file": "libssl.so",
+      "sha256": "48200945b53c4f2d62ea9b08fe02ce09a081b99a9bcc8f973887fb1d4beb5bf6",
+      "bytes": 816264
+    },
+    {
+      "file": "libicui18n.so",
+      "sha256": "01a27619ddeb5ed18b85dd4552b7caed30d9e14f8df6e134b8036bd01858e10e",
+      "bytes": 3174424
+    },
+    {
+      "file": "libicuuc.so",
+      "sha256": "6539b7c48dcbf9621d16b78bca741d6b797990d6efe8e353cf77e1733becf25c",
+      "bytes": 1867696
+    },
+    {
+      "file": "libc++_shared.so",
+      "sha256": "e09c2f45cf4cf8ae574f94b6c2650d99ead0d332d5396f6613f062a2d2d73540",
+      "bytes": 1374336
+    },
+    {
+      "file": "libicudata.so",
+      "sha256": "413f5a232028db9c4380ea414ec19d2044013ab317cb83a0abd97d9aa09c0f7a",
+      "bytes": 33108952
+    }
+  ]
+}

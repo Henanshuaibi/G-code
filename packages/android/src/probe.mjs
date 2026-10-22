@@ -1,0 +1,14 @@
+import path from 'node:path';
+import {mkdir} from 'node:fs/promises';
+import {fileURLToPath} from 'node:url';
+const root=path.resolve(process.env.OPENCODE_MOBILE_ROOT??'build/probe-home');
+await mkdir(root,{recursive:true});
+process.env.HOME=root;process.env.XDG_DATA_HOME=path.join(root,'data');process.env.XDG_CONFIG_HOME=path.join(root,'config');process.env.XDG_STATE_HOME=path.join(root,'state');process.env.XDG_CACHE_HOME=path.join(root,'cache');
+process.env.SHELL='/system/bin/sh';process.env.OPENCODE_NODE_PTY_PATH=fileURLToPath(new URL('./pty.cjs',import.meta.url));
+const {OpenCode}=await import('@opencode/sdk');
+console.log('SDK_IMPORTED');
+const engine=await OpenCode.create({app:{name:'android',version:'0.1.0'},database:{path:path.join(root,'opencode.db')},fs:{filewatcher:false,fff:false},models:{fetch:false},config:{project:false,claude:false,content:JSON.stringify({shell:'/system/bin/sh',snapshots:false,lsp:false,formatter:false,update:'disable',share:'disabled'})}});
+console.log('SDK_STARTED',Object.keys(engine));
+console.log(JSON.stringify(await engine.session.list({})));
+await engine.close();
+console.log('SDK_CLOSED');

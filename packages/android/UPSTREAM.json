@@ -1,0 +1,8 @@
+{
+  "repository": "https://github.com/anomalyco/opencode",
+  "branch": "dev",
+  "commit": "60a5a6ca7ce176b04cd2321ffd1819b1ea8e6006",
+  "sdk": "2.0.32",
+  "port": "0.1",
+  "package": "cn.g.opencode"
+}
