@@ -18,7 +18,8 @@ const token=process.env.OPENCODE_MOBILE_TOKEN;if(!token||token.length<32)throw n
 const {DeviceBridge}=await import('./device.mjs');
 const deviceToken=process.env.OPENCODE_DEVICE_TOKEN??'';delete process.env.OPENCODE_DEVICE_TOKEN;
 const device=new DeviceBridge(process.stdin,process.stdout,deviceToken);
-const {MobileEngine}=await import('./engine.mjs');const engine=await MobileEngine.create(root,settings,device);
+let deployment;try{deployment=JSON.parse(await readFile(path.join(directory,'../config/platform.json'),'utf8'));}catch(error){if(error.code!=='ENOENT')throw error;deployment={};}
+const {MobileEngine}=await import('./engine.mjs');const engine=await MobileEngine.create(root,settings,device,deployment);
 const prefix='/m/'+token+'/';
 const keys=[settings.key,...(settings.providers??[]).map(item=>item.key)].filter(Boolean);
 const clean=error=>keys.reduce((text,key)=>text.replaceAll(key,'[API Key 已隐藏]'),String(error?.message??error)).slice(0,1200);

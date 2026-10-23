@@ -20,7 +20,7 @@ final class ApiProfiles {
         JSONArray source=migrate(input).getJSONArray("providers"),providers=new JSONArray();if(source.length()>30)throw new IllegalArgumentException("最多保存 30 个 API 服务");Set<String> ids=new HashSet<>();
         for(int i=0;i<source.length();i++){
             JSONObject item=source.getJSONObject(i);String id=item.optString("id"),name=item.optString("name").trim();
-            if(!id.matches("[a-z][a-z0-9_-]{0,79}")||!ids.add(id))throw new IllegalArgumentException("API 服务标识不正确或重复");if(name.isEmpty()||name.length()>80)throw new IllegalArgumentException("服务名称请填写 1～80 个字符");
+            if(id.startsWith("gcode_platform_")||!id.matches("[a-z][a-z0-9_-]{0,79}")||!ids.add(id))throw new IllegalArgumentException("API 服务标识不正确或重复");if(name.isEmpty()||name.length()>80)throw new IllegalArgumentException("服务名称请填写 1～80 个字符");
             String base=item.optString("base").trim();boolean http=item.optBoolean("allowHttp");URI uri=new URI(base);
             if(!"https".equalsIgnoreCase(uri.getScheme())&&!(http&&"http".equalsIgnoreCase(uri.getScheme())))throw new IllegalArgumentException("API 地址需使用 HTTPS；HTTP 需要明确允许");
             if(uri.getHost()==null||uri.getUserInfo()!=null||uri.getQuery()!=null||uri.getFragment()!=null)throw new IllegalArgumentException("请填写纯 API 地址，不包含账号或查询参数");
@@ -28,7 +28,9 @@ final class ApiProfiles {
             String protocol=item.optString("protocol","chat");if(!protocol.equals("chat")&&!protocol.equals("responses"))throw new IllegalArgumentException("请选择接口类型");
             JSONArray clean=cleanModels(item,"models"),images=cleanModels(item,"imageModels"),videos=cleanModels(item,"videoModels");if(clean.length()+images.length()+videos.length()==0)throw new IllegalArgumentException("至少填写一个对话、生图或视频模型 ID");
             String key=item.optString("key").trim();if(key.length()>8192||key.contains("\n")||key.contains("\r"))throw new IllegalArgumentException("API Key 格式不正确");
-            providers.put(new JSONObject().put("id",id).put("name",name).put("base",base).put("protocol",protocol).put("allowHttp",http).put("models",clean).put("imageModels",images).put("videoModels",videos));
+            JSONObject options=new JSONObject(),provided=item.optJSONObject("modelOptions");
+            if(provided!=null){java.util.Iterator<String> names=provided.keys();while(names.hasNext()){String model=names.next();boolean present=false;for(int j=0;j<clean.length();j++)if(clean.getString(j).equals(model))present=true;if(!present)continue;JSONObject value=provided.getJSONObject(model);JSONArray levels=value.optJSONArray("reasoningEfforts"),accepted=new JSONArray();Set<String> unique=new HashSet<>();if(levels!=null)for(int j=0;j<levels.length();j++){String level=levels.getString(j);if(!java.util.Arrays.asList("none","minimal","low","medium","high","xhigh","max").contains(level))throw new IllegalArgumentException("不支持的思考档位");if(unique.add(level))accepted.put(level);}String tier=value.optString("fastTier","");if(!java.util.Arrays.asList("","priority","fast","ultrafast").contains(tier))throw new IllegalArgumentException("Fast 参数不正确");options.put(model,new JSONObject().put("reasoningEfforts",accepted).put("fastTier",tier));}}
+            providers.put(new JSONObject().put("modelOptions",options).put("id",id).put("name",name).put("base",base).put("protocol",protocol).put("allowHttp",http).put("models",clean).put("imageModels",images).put("videoModels",videos));
         }
         JSONObject selected=input.optJSONObject("defaultModel");boolean found=false;
         if(selected!=null)for(int i=0;i<providers.length();i++){JSONObject p=providers.getJSONObject(i);for(int j=0;j<p.getJSONArray("models").length();j++)if(p.getString("id").equals(selected.optString("providerID"))&&p.getJSONArray("models").getString(j).equals(selected.optString("id")))found=true;}

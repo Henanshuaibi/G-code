@@ -73,7 +73,7 @@ export class MediaJobs {
     job.files=[{filename,mime:'video/mp4',size:saved.size}];job.status='completed';job.progress=100;delete job.error;await this.save(job);
   }
   refresh(id,sessionID){const job=this.jobs.get(id);if(!job||sessionID&&job.sessionID!==sessionID)throw new Error('没有找到此生成任务');if(job.remoteId&&job.status!=='completed'){const timer=this.timers.get(id);if(timer)clearTimeout(timer);this.timers.delete(id);this.track(job,()=>this.poll(job));}return this.public(job);}
-  async asset(filename){if(!/^[a-f0-9-]{36}\.(png|jpg|webp|gif|mp4)$/.test(filename))throw new Error('生成文件标识不正确');const file=path.join(this.root,'assets',filename);return {path:file,size:(await stat(file)).size,mime:filename.endsWith('.mp4')?'video/mp4':filename.endsWith('.jpg')?'image/jpeg':'image/'+filename.split('.').at(-1)};}
+  async asset(filename){if(!/^[a-f0-9-]{36}\.(png|jpg|webp|gif|mp4|preview\.jpg)$/.test(filename))throw new Error('生成文件标识不正确');const file=path.join(this.root,'assets',filename);return {path:file,size:(await stat(file)).size,mime:filename.endsWith('.mp4')?'video/mp4':filename.endsWith('.jpg')?'image/jpeg':'image/'+filename.split('.').at(-1)};}
   async close(){this.closed=true;for(const timer of this.timers.values())clearTimeout(timer);for(const controller of this.controllers)controller.abort();await Promise.allSettled(this.pending.values());}
 }
 export function mediaPlugin(media){

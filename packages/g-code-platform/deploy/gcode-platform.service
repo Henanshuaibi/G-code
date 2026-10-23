@@ -1,0 +1,23 @@
+[Unit]
+Description=G Code platform trial (single SQLite worker)
+After=network-online.target
+
+[Service]
+Type=simple
+User=gcode
+Group=gcode
+WorkingDirectory=/opt/gcode-platform
+EnvironmentFile=/opt/gcode-platform/.env
+ExecStart=/usr/bin/node /opt/gcode-platform/src/main.mjs
+Restart=on-failure
+RestartSec=35
+TimeoutStopSec=150
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/gcode-platform/data
+
+[Install]
+WantedBy=multi-user.target

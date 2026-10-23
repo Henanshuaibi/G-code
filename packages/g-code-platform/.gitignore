@@ -1,0 +1,17 @@
+.env
+.env.*
+!.env.example
+/data/
+*.db
+*.db-*
+*.csv
+*.log
+*.sqlite
+*.sqlite-*
+*.pem
+*.key
+*.p12
+*.pfx
+*password*.txt
+*credentials*.json
+*secrets*.json

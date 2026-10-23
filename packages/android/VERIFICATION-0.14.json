@@ -1,0 +1,46 @@
+{
+  "version": "0.14",
+  "package": "cn.g.opencode",
+  "abi": "arm64-v8a",
+  "minSdk": 30,
+  "upstreamSdk": "2.0.32",
+  "build": "passed",
+  "signature": "APK v3 verified; same original cn.g.opencode fingerprint; zipalign passed",
+  "platform": {
+    "backend": "../g-code-platform",
+    "backendTests": 17,
+    "backendTestsPassed": true,
+    "realSdkChatAndResponsesMockRoutePassed": true,
+    "localFunctionToolPassed": true,
+    "partialStreamNoSdkRetryPassed": true,
+    "actualUpstreamIdsConfigured": false,
+    "actualPricesConfigured": false,
+    "paidTestsRun": false,
+    "productionDeployed": false
+  },
+  "checks": {
+    "sourceFullRegression": "passed",
+    "finalApkIsolatedEngine": "passed",
+    "finalApkBundledRuntimePlatformSdk": "passed",
+    "packageIntegrity": "passed",
+    "rootBunCheck": "not executed: bun: Permission denied"
+  },
+  "notVerified": [
+    "Real upstream model IDs/capabilities/usage/prices/access",
+    "Real paid inference or upstream billing reconciliation",
+    "Production deployment, HTTPS, Caddy/systemd templates",
+    "Android touch/navigation and native full lifecycle",
+    "Real browser admin interaction"
+  ],
+  "evidence": [
+    "build/platform-full-source-check.log",
+    "build/platform-final-engine-0.14.log",
+    "build/platform-final-sdk-0.14.log",
+    "build/platform-package-check-0.14.log",
+    "build/platform-build-0.14.log",
+    "build/platform-backend-check.log"
+  ],
+  "previousReleaseVerification": "VERIFICATION-0.13.json",
+  "apkBytes": 73266610,
+  "apkSha256": "acee5dbdfc71b6164fc980dbe5f7b9d34f2c8a4bb9480cb7d3f0c555dd1390c7"
+}

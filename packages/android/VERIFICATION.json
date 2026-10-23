@@ -1,313 +1,58 @@
 {
-  "version": "0.13",
+  "version": "0.19",
   "package": "cn.g.opencode",
   "abi": "arm64-v8a",
   "minSdk": 30,
   "upstreamSdk": "2.0.32",
   "build": "passed",
-  "signature": "APK v3 verified; same cn.g.opencode certificate as released G code 0.12 and original fingerprint",
-  "removed": [
-    "project ZIP UI",
-    "native project ZIP import/export bridge and implementation"
+  "signature": "Original cn.g.opencode signing identity; APK v3 and zipalign verified",
+  "apkBytes": 73274802,
+  "apkSha256": "8444ce30bd8f1cad398f520cd3acdaf5798044c4a15c762a51876f2e59ebaed2",
+  "features": {
+    "reasoning": "per-model declared options / native SDK variants, Chat reasoning_effort and Responses reasoning.effort",
+    "fast": "independent selected service tier with configured upstream mapping",
+    "defaultReset": "tested: previous reasoning removed; confirmed tier-capable BYOK/channel sends default standard tier",
+    "billing": "separate Fast sale/procurement prices; snapshots record effort and tier",
+    "unsupportedCombination": "rejected before upstream/reservation",
+    "explicitFastDowngrade": "no automatic Fast charge; pre-output release or post-output needs_review; no silent replay"
+  },
+  "platform": {
+    "backendTests": 35,
+    "backendTestsPassed": true,
+    "schemaMigration": "003_fast_prices.sql applied; backup retained privately",
+    "localService": "http://127.0.0.1:8787",
+    "localServiceHealth": 200,
+    "ownerAccountAndLedgerPreserved": true,
+    "realModels": "both disabled and price_unconfigured; no real Fast capability/price auto-enabled",
+    "paidTestsRun": false,
+    "productionDeployed": false
+  },
+  "checks": {
+    "sourceFullRegression": "passed; added admin Fast form assertions also passed separately",
+    "finalApkIsolatedEngine": "passed, 40 simulated model requests",
+    "finalApkBundledRuntimePlatformSdk": "passed, Chat/Responses reasoning + Fast + images + tools + billing",
+    "finalApkProductionUiFunctions": "passed, effort/speed/quote selection, rendering and deletion HTML tree tests",
+    "adminProductionForms": "passed, explicit capabilities and separate Fast procurement values",
+    "packageIntegrity": "passed",
+    "rootBunCheck": "unavailable: bun: Permission denied",
+    "knownSecretArchiveScan": "passed: encrypted upstream key decoded only in process memory, signing password and master-key material absent; private paths excluded"
+  },
+  "notVerified": [
+    "Real upstream effort/Fast entitlement, prices, reported tier, acceleration or paid billing reconciliation",
+    "Android touch interaction, real WebView layout, scroll FPS and whole-app memory",
+    "Public server/production deployment and real browser administration"
   ],
-  "runtime": "passed: final G code 0.13 APK engine extracted and tested using bundled Android Node.js, isolated environment and imports outside extracted engine denied",
-  "suite": "npm test --workspaces=false passed against final 0.13 APK engine/runtime; local evidence build/final-test-0.13.log",
-  "configurationSchemaJvmAssertions": 21,
-  "attachments": {
-    "transport": "Actual final-APK SDK photo/video-frame/PDF/text attachment conversion verified against local HTTP/SSE model fixture; native Android media decoding not exercised",
-    "nativePickerTest": false,
-    "nativePhotoDecodeExifHeicTest": false,
-    "nativeVideoExtractionTest": false,
-    "actualSdkFrameTextTransport": true,
-    "rawVideoSent": false,
-    "videoAudioSupported": false,
-    "photoProcessing": "Native BitmapFactory sampling to <= approximately 2048 pixels, EXIF orientation, JPEG or transparent PNG; supported codecs depend on Android",
-    "videoProcessing": "Up to 100 MB source, up to 8 sampled JPEG frames per clip with timestamp descriptions, no audio; maximum 16 images across photos/videos per prompt",
-    "checks": [
-      "Actual image bytes override claimed MIME",
-      "UTF-8 text and video timestamp/no-audio description",
-      "File/count/20 MB total bounds",
-      "Eight clips reduced to sixteen images",
-      "Frame manifest traversal and symlink rejection",
-      "Temporary frames and source cleanup",
-      "Private image/video thumbnail preview",
-      "Final SDK HTTP request includes video description and actual JPEG frames"
-    ],
-    "nativeProgress": "Per-item persisted progress/errors, partial successes retained, processing blocks send, interrupted process detected; native UI requires phone validation"
-  },
-  "generation": {
-    "protocols": [
-      "Images Generations JSON: data[0].b64_json or URL",
-      "OpenAI Videos multipart/task/status/content"
-    ],
-    "actualSdkToolCallsVerified": true,
-    "localImageVideoHttpFixturesVerified": true,
-    "checks": [
-      "generation models kept separate from chat models",
-      "base64 and URL image results",
-      "redirect download without key leak to external CDN",
-      "video task ID and progress",
-      "query/download resume after host restart without duplicate POST",
-      "HTTP error redaction",
-      "output bytes saved in private assets",
-      "MP4 Range responses"
-    ],
-    "realModelGenerationTest": false,
-    "nativeVideoPlaybackTest": false,
-    "nativeSavePickerTest": false
-  },
-  "sessionModelRegression": {
-    "localModelHttpRequests": 36,
-    "gatewayFixtures": 2,
-    "checks": [
-      "blank session concurrency reuse",
-      "AI title generation and old title repair",
-      "same gateway model switching",
-      "same model IDs on distinct gateways/keys",
-      "conversation deletion while preserving workspace files",
-      "private API keys excluded from status and SQLite"
-    ]
-  },
-  "deviceControl": {
-    "scope": "Whole-device foreground UI; no fixed package allowlist; launchable-app discovery via MAIN/LAUNCHER queries",
-    "actions": [
-      "status",
-      "apps",
-      "open",
-      "read",
-      "screenshot",
-      "focus",
-      "type",
-      "submit",
-      "click",
-      "long_click",
-      "scroll",
-      "tap",
-      "long_press",
-      "swipe",
-      "back",
-      "home",
-      "recents",
-      "notifications",
-      "quick_settings"
-    ],
-    "grant": "Explicit current-session grant, 15 minutes / 300 tool requests; stop overlay, notification, chat interruption and session changes revoke",
-    "controlGateJvmChecks": 40,
-    "screenFrameJvmChecks": 11,
-    "stalePageFix": "Unrelated accessibility content events no longer invalidate node actions. Refresh chosen node and compare identity/text/bounds; check app/window/display identity and 120-second observation limit. Coordinate actions additionally compare actionable layout.",
-    "asyncNativeIpc": "Per-request cancellation by authenticated request ID and session; conversation grant remains independent. Grant generation and deadline captured before queueing, checked before execution and during traversal. Late queued requests cannot cross a regrant; callbacks are cancelled through the request.",
-    "screenshotModelTransport": "Passed with actual upstream SDK and final bundled Android runtime: native-fixture JPEG bytes reached model image request, temporary file deleted, tool history returns private preview without Base64",
-    "localSdkActionProtocolFixture": true,
-    "nativeUiActionsTest": false,
-    "meituanPinhaofanRetest": false,
-    "limits": "No root, lockscreen bypass, protected screenshots or private app data access; final purchase/payment, passwords and system permission confirmation are manual",
-    "requestCancellationJvmChecks": 12
-  },
-  "userApiKeyUsed": false,
-  "deviceUiTest": false,
-  "installedPreferencesAndKeystoreMigrationTest": false,
-  "installedLifecycleTest": false,
-  "meituanFlowTest": false,
-  "watchTest": false,
-  "wholeUpstreamCheck": "not run: Bun unavailable; focused Android port suite only",
-  "limitations": [
-    "Real gateway compatibility and generated output require account/API verification",
-    "Only OpenAI-compatible Images and Videos generation protocols implemented; other video/image protocols need adapters",
-    "Text and code limited to UTF-8; Office/archive binary attachments not parsed; video attachments represented as sampled images without audio",
-    "No image-edit or reference-image video flow",
-    "Native Android picker, preview, playback, save and permissions require phone validation",
-    "Submitting a generation job is not cancelled by stopping the chat reply",
-    "Full Git, terminal, MCP settings and speech UI not provided",
-    "Full native phone UI control and new accessibility capabilities require device validation; Meituan 拼好饭 regression not yet retested on phone",
-    "An already-started gesture may finish (maximum two seconds); stopping cannot undo actions already performed",
-    "Native worker scheduling, overlay responsiveness and OEM background behavior require phone testing; no claim that every reported freeze is reproduced or resolved",
-    "Taobao Flash Purchase focused-input, software keyboard windows and IME submit require device testing; no claim that actual Taobao search has been verified",
-    "Appearance preview/save/cancel, actual Android system-theme transitions, system bars and larger text layout still require phone visual validation; no local working browser/touch harness",
-    "Native SAF providers, HEIC/AVIF/EXIF and real video decoding/extraction require device validation; video frame fixtures verify SDK transport only"
+  "evidence": [
+    "build/platform-backend-0.19.log",
+    "build/platform-source-0.19.log",
+    "build/admin-ui-0.19.log",
+    "build/platform-final-engine-0.19.log",
+    "build/platform-final-sdk-0.19.log",
+    "build/platform-final-ui-0.19.log",
+    "build/platform-final-render-0.19.log",
+    "build/platform-final-delete-0.19.log",
+    "build/platform-package-check-0.19.log",
+    "build/platform-build-0.19.log"
   ],
-  "stallHandling": {
-    "observedInCode": [
-      "0.5 traversed accessibility trees and compressed screenshots on Android main thread",
-      "Repeated subtree labels and ordinary read layout traversal increased work",
-      "UI fetch had no timeout; a stalled request prevented subsequent refresh",
-      "A pending SDK permission request had no background-visible status"
-    ],
-    "changes": [
-      "Serial background worker for device work; bounded first-label lookup; ordinary read skips extra full layout traversal",
-      "Immediate grant revoke and pending callback cancellation on stop, outside the device queue",
-      "SDK event projection shows model wait/thinking/tool/retry/manual-confirmation stages; background control overlay can return to app",
-      "Request timeouts abort fetch: 20 seconds normal and 40 seconds prompt admission; no automatic mutation resend",
-      "Eight minutes without actual progress requests SDK interruption; ongoing reasoning renews activity and manual-confirmation wait is exempt",
-      "Bottom-sheet task status, stop and native engine restart entry; preserves stored projects/conversations/API configuration"
-    ],
-    "automated": [
-      "Actual local HTTP response deliberately held open: request aborted, socket closed, no retry, subsequent request succeeds",
-      "Production SDK event projection: idle boundary, reasoning progress, concurrent tool completion cannot erase outstanding permission waits",
-      "Actual final-APK SDK/model HTTP fixture: hung model request remains observable; SDK interrupt then subsequent prompt works without replaying earlier phone mutations",
-      "Regression of attachments, media, multiple providers, titles, conversation deletion, device IPC and screenshot-to-model bytes"
-    ],
-    "nativeFreezeReproduced": false,
-    "nativeOverlayStopAndRestartUiTest": false,
-    "iqooBackgroundRestrictionsTest": false
-  },
-  "searchAuthorizationFix": {
-    "codeFindings": [
-      "Bridge timeout/individual tool abort sent session stop, revoking valid grant",
-      "Accessibility feedback onInterrupt was treated as service shutdown",
-      "No explicit focus/IME submit actions; normal page traversal could omit focused editor after truncation"
-    ],
-    "changes": [
-      "Timeout/abort sends cancel for original requestID instead of session stop",
-      "Actual service unbind/destroy still revoke; feedback interruption does not",
-      "Status and errors include actual grant state/reason for current session",
-      "Focused editor prioritized in read; IME active window can resolve to focused application window",
-      "SET_TEXT action recognition and focus/type/IME submit stages; re-read verifies input before submit"
-    ],
-    "automated": [
-      "Real private IPC timeout cancelled only original request; no stop command sent and later status remained authorized",
-      "12 production JVM request checks: deadline/cancel preserve gate, cancelled callbacks, late and queued stale-generation rejection",
-      "Actual final APK SDK model fixture: input timeout reports authorization true; status/read then one submit; input is not automatically replayed",
-      "Regression of whole-device tool protocol, screenshots, stalled model cancellation, providers, conversations, attachments and media"
-    ],
-    "taobaoFlashPurchaseRealDeviceTest": false,
-    "nativeImeFocusAndSubmitTest": false,
-    "grantUnchanged": "Explicit grant remains 15 minutes / 300 requests; real expiry, manual stop, service disconnect or engine stop still revoke"
-  },
-  "displayName": "G code",
-  "appearance": {
-    "default": "White background #ffffff, dark text #111111",
-    "location": "侧栏 → 外观与界面",
-    "modes": [
-      "light",
-      "dark",
-      "system",
-      "custom"
-    ],
-    "customizable": [
-      "background color",
-      "text color",
-      "button/accent color",
-      "base text size 12-22",
-      "corner radius 0-24"
-    ],
-    "storage": "Independent appearance key in existing local UI preferences; API/model configuration and conversations untouched",
-    "preview": "Live preview; closing sheet restores saved appearance; explicit save persists; reset restores white/black default",
-    "native": "Loading screen, status/navigation bars and control overlay use stored/current colors; system mode reads actual Android uiMode rather than only fixed-Light WebView media query",
-    "automated": [
-      "Actual packaged module preference round-trip through serialized file",
-      "White/black default, system dark/light resolution and custom preset preservation",
-      "Color/number validation, unreadable custom contrast rejection and malformed storage fallback",
-      "Theme module route and G code branding served by final APK engine",
-      "Final APK manifest label G code; old visible product name absent from native DEX; original package/signature and dependencies retained"
-    ],
-    "browserRenderTest": false,
-    "nativeAppearanceAndPrefsUiTest": false,
-    "actualSystemDarkModeSwitchTest": false
-  },
-  "bugAudit": {
-    "fixes": [
-      "Single prompt admission per session from preparation onward",
-      "Stop cancels preparation before SDK admission; invalid preparation releases active session",
-      "Latest-first SDK history page and older cursor traversal",
-      "Late UI requests checked against current view; new-session result cannot navigate over a later user selection",
-      "Acknowledgement preserves newer drafts and removes only submitted attachments",
-      "Attachment removal callback targets original session and is disabled during send",
-      "UTF-8 JSON decoded only after all request byte chunks combined",
-      "Cleanup failure after SDK acceptance does not report a false submission failure"
-    ],
-    "automated": [
-      "Eight concurrent HTTP prompt requests: one acceptance, seven busy errors",
-      "Actual SDK preparation interrupted synchronously before admission: no message/model call; retry and deletion succeed",
-      "Latest three-message window and complete older-page cursor walk compared to full SDK history",
-      "Chinese and emoji split at one/two/three/seven byte chunk boundaries",
-      "Persisted draft and attachment reconciliation preserves newer content and other conversations"
-    ],
-    "nativeUiNavigationTest": false,
-    "nativePickerAndCodecTest": false,
-    "realModelAccountTest": false,
-    "finalApkSuitePassed": true,
-    "evidence": [
-      "build/audit-engine-round3.log",
-      "build/audit-full-source.log",
-      "build/final-test-0.13.log",
-      "build/package-check-0.13.log"
-    ]
-  },
-  "optimization": {
-    "changes": [
-      "Per-message render cache and child reconciliation preserve unchanged nodes",
-      "Updated messages preserve expanded details; lazy/async image decoding",
-      "Hidden document pauses UI poll scheduling, visible document triggers refresh; engine tasks unaffected",
-      "Idle UI poll 3000ms, active 450ms, session list automatic refresh at least 5000ms apart",
-      "Query permission list only during a run or outstanding confirmation",
-      "Prune media element cache to current displayed jobs",
-      "Load review snapshots from disk on demand instead of keeping project text per session in memory"
-    ],
-    "automated": {
-      "treeFixtureMessages": 500,
-      "unchangedNodeOperations": 0,
-      "singleChangedMessageBuilds": 1,
-      "singleChangedMessageInserts": 1,
-      "singleChangedMessageRemovals": 1,
-      "retainedNodeStateAndOrder": true,
-      "cacheRelease": true
-    },
-    "testMethod": "Production renderer on domhandler/domutils HTML tree adapter; no browser globals patched",
-    "nativeWebViewFpsTest": false,
-    "nativeBackgroundVisibilityTest": false,
-    "batteryOrRssBenchmark": false,
-    "finalApkSuitePassed": true,
-    "evidence": [
-      "build/optimization-source.log",
-      "build/final-test-0.13.log",
-      "build/package-check-0.13.log"
-    ]
-  },
-  "transferOptimization": {
-    "changes": [
-      "Generated MP4 streamed with bounded buffers to temporary file and atomically renamed on completion",
-      "Failed video transfer removes partial file and preserves existing output",
-      "Sequential attachment size checks stop before later files; abort signal reaches file reads",
-      "Video thumbnail buffer not retained during prompt preparation",
-      "Preview metadata capped at 512 entries and removed with its session",
-      "Complete content-addressed preview reused; truncated preview repaired with atomic replacement"
-    ],
-    "automated": [
-      "Real HTTP complete video bytes, invalid/empty/oversize/disconnected responses and disk failure",
-      "Attachment aggregate size rejection before later reads and pre-aborted preparation",
-      "600 preview entries capped to 512; session deletion releases entries; unchanged preview mtime retained and truncated bytes repaired"
-    ],
-    "nativeCodecOrPlaybackTest": false,
-    "batteryOrRssBenchmark": false,
-    "finalApkSuitePassed": true,
-    "evidence": [
-      "build/optimization2-source.log",
-      "build/final-test-0.13.log",
-      "build/package-check-0.13.log"
-    ]
-  },
-  "conversationFeatures": {
-    "batchDeletion": "Selected visible conversations, explicit bottom-sheet confirmation, sequential deletion with mixed-success results; unselected sessions/projects retained",
-    "tokenUsage": "Original SDK per-message tokens and session totals including title; five non-overlapping token categories; unknown per-message usage not reported as zero",
-    "chatgpt": "Original SDK token-sharing OAuth, G code registration display name, system-browser official authorization URL, private loopback callback, model catalog and logout; no existing Codex credentials accessed",
-    "automated": [
-      "Original SDK OAuth URL and PKCE/nonce; invalid state fails without token exchange; cancellation closes listener",
-      "Fixture OAuth credential activates catalog and official Responses base URL; public status omits credentials; logout removes credential",
-      "Actual SDK multi-session deletion continues after missing session and preserves unselected conversation and project",
-      "Local HTTP usage values propagate to message and full-session totals including title, independent of pagination"
-    ],
-    "realChatGPTLoginTest": false,
-    "realSubscriptionInferenceTest": false,
-    "realRefreshTokenTest": false,
-    "nativeBrowserAndBatchUiTest": false,
-    "finalApkSuitePassed": true,
-    "evidence": [
-      "build/account-batch-check.log",
-      "build/features-0.13-engine.log",
-      "build/final-test-0.13.log",
-      "build/package-check-0.13.log"
-    ]
-  },
-  "apkBytes": 73262514,
-  "apkSha256": "ba3bf40926c4ef2ade8bc1257fdad6420bdbb6a7ce27c08be40141a2cd223655"
+  "previousReleaseVerification": "VERIFICATION-0.18.json"
 }

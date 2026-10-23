@@ -23,6 +23,6 @@ with zipfile.ZipFile('build/unsigned.apk','a',zipfile.ZIP_DEFLATED) as z:
  for p in Path('build/native/arm64-v8a').glob('*.so'):z.write(p,'lib/arm64-v8a/'+p.name)
 PY
 zipalign -f 4 build/unsigned.apk build/aligned.apk
-apksigner sign --ks tools/mobile.keystore --ks-pass file:tools/signing-password --out build/G-code-0.13.apk build/aligned.apk
-apksigner verify --verbose build/G-code-0.13.apk
-zipalign -c 4 build/G-code-0.13.apk
+apksigner sign --ks tools/mobile.keystore --ks-pass file:tools/signing-password --out build/G-code-0.19.apk build/aligned.apk
+apksigner verify --verbose build/G-code-0.19.apk
+zipalign -c 4 build/G-code-0.19.apk

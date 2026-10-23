@@ -19,3 +19,5 @@ const moved=[changed[499],changed[0],changed[12]];reconcileChildren(parent,moved
 cache.retain(rows.slice(0,3).map(item=>item.id));assert.equal(cache.items.size,3);cache.clear();assert.equal(cache.items.size,0);
 reconcileChildren(parent,[]);assert.equal(parent.children.length,0);reconcileChildren(parent,[original[0]]);assert.equal(parent.firstChild,original[0]);assert.equal(parent.firstChild.nextSibling,null);
 console.log('PASS: 500-message tree: unchanged refresh 0 node operations; one streaming change 1 build + 1 insert/1 removal; existing nodes/state retained; reorder, removal and cache release');
+
+let serializations=0;const immutable={id:'stable',toJSON(){serializations++;return {id:this.id};}};cache.get('stable',immutable,build,true);for(let i=0;i<100;i++)cache.get('stable',immutable,build,true);assert.equal(serializations,1,'Stable history references must not be repeatedly serialized');console.log('PASS: immutable history 100 refreshes perform 1 serialization total');

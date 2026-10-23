@@ -12,4 +12,13 @@ input[type=checkbox],input[type=radio]{accent-color:var(--accent-text)}
 
 #attachmentStatus{font-size:.85rem;padding:8px 14px;white-space:pre-wrap;border-top:1px solid var(--line)}#attachmentStatus[hidden]{display:none}.attachmentError{color:var(--danger)}
 
-.usageBar{display:flex;justify-content:flex-end;padding:0 12px}.usageBar button,.usageDetail{font-size:12px;color:var(--muted);padding:5px 8px}.batchRow{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}.batchRow input{width:22px;height:22px;flex:none}.batchRow span{overflow-wrap:anywhere}
+.usageBar{display:flex;justify-content:space-between;padding:0 12px}.usageBar button,.usageDetail{font-size:12px;color:var(--muted);padding:5px 8px}.batchRow{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}.batchRow input{width:22px;height:22px;flex:none}.batchRow span{overflow-wrap:anywhere}
+
+#accountButton{color:var(--ink);text-align:left;max-width:75%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+.sessionRow>.sessionDelete{flex:none;width:auto!important;font-size:12px;min-width:44px;padding:6px!important}.sessionRow>input{width:20px;min-width:20px;accent-color:var(--accent-text)}.sessionRow>.sessionTitle{flex:1;min-width:0}#sessionBatch{display:flex;gap:6px;flex-wrap:wrap;padding:8px 0}#sessionBatch[hidden]{display:none}#sessionBatch button{width:auto!important;font-size:12px;padding:8px!important}
+
+/* Offscreen conversations need no layout or paint until scrolled into view. */
+#timeline>.message{content-visibility:auto;contain-intrinsic-size:auto 180px}
+
+.optionGrid{display:flex;flex-wrap:wrap;gap:8px}.optionGrid button[aria-pressed=true]{background:var(--accent);color:var(--on-accent)}#optionsButton{font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:40%}.usageBar #accountButton{max-width:40%}

@@ -1,0 +1,3 @@
+// Decimal currency entry -> fixed-precision ledger units. Never multiply floating point prices.
+export function micros(value){const text=String(value).trim();if(!/^\d+(?:\.\d{1,6})?$/.test(text))throw new Error('金额须为非负数字，最多 6 位小数');const [whole,fraction='']=text.split('.'),result=BigInt(whole)*1000000n+BigInt(fraction.padEnd(6,'0'));if(result>BigInt(Number.MAX_SAFE_INTEGER))throw new Error('金额超过允许范围');return Number(result);}
+export function decimal(value){if(value===null||value===undefined)return '';const number=BigInt(value);return String(number/1000000n)+'.'+String(number%1000000n).padStart(6,'0');}

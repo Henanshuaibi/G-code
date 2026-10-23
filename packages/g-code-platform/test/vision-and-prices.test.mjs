@@ -1,0 +1,29 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import {fixture,upstream,reply,caps,schema,body,requestId} from './helpers.mjs';
+import {micros,decimal} from '../web/prices.js';
+const image='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAEElEQVR4nGP4z8AARAwQCgAf7gP9i18U1AAAAABJRU5ErkJggg==';
+test('decimal prices use exact fixed precision and preserve unconfigured values',()=>{
+ assert.equal(micros('0.000001'),1);assert.equal(micros('12.345678'),12345678);assert.equal(micros('0'),0);assert.equal(decimal(12345678),'12.345678');assert.equal(decimal(null),'');for(const value of ['',NaN,'1e6','-1','0.0000001','9007199255'])assert.throws(()=>micros(value));
+});
+test('Chat vision routes only to image-capable same-model channel and settles real usage',async t=>{
+ const f=await fixture(t);f.configure();const text=await upstream(t,(_req,res)=>reply(res)),vision=await upstream(t,(_req,res)=>reply(res));await f.channel(text,{priority:0});await f.channel(vision,{priority:1,capabilities:{...caps,input:['text','image']}});
+ const input=body('gcode-sol',{messages:[{role:'user',content:[{type:'text',text:'Describe shapes, not just OCR'},{type:'image_url',image_url:{url:image,detail:'high'}}]}]});const id=requestId(),result=await f.request('/v1/chat/completions',input,f.token,{'Idempotency-Key':id});assert.equal(result.response.status,200,result.text);assert.equal(text.calls.length,0);assert.equal(vision.calls.length,1);assert.equal(vision.calls[0].body.messages[0].content[1].image_url.url,image);assert.equal(f.store.user(f.user.id).reserved_micros,0);assert.equal(f.store.get('SELECT charged_micros FROM requests WHERE id=?',id).charged_micros,250);assert(f.store.catalogue()[0].capabilities.input.includes('image'));assert(!JSON.stringify(f.logs).includes(image));
+});
+test('Responses image bytes reach verified mapping; missing capability/remote/PDF inputs fail before charge',async t=>{
+ const f=await fixture(t);f.configure('gcode-sol','responses');const mock=await upstream(t,(_req,res)=>{res.writeHead(200,{'Content-Type':'application/json'});res.end(JSON.stringify({id:'resp_fixture',status:'completed',output:[],usage:{input_tokens:100,output_tokens:10}}));});const channel=await f.channel(mock,{protocol:'responses',usage_schema:{...schema,input:'input_tokens',output:'output_tokens',cache_read:null}});
+ const input={model:'gcode-sol',input:[{role:'user',content:[{type:'input_text',text:'Describe visible scene'},{type:'input_image',image_url:image}]}],max_output_tokens:100};const denied=await f.request('/v1/responses',input,f.token,{'Idempotency-Key':requestId()});assert.equal(denied.response.status,503);assert.equal(f.store.all('SELECT * FROM requests').length,0);
+ f.store.run('UPDATE channels SET capabilities=? WHERE id=?',JSON.stringify({...caps,input:['text','image']}),channel.id);
+ const result=await f.request('/v1/responses',input,f.token,{'Idempotency-Key':requestId()});assert.equal(result.response.status,200,result.text);assert.equal(mock.calls[0].body.input[0].content[1].image_url,image);
+ for(const image_url of ['https://example.com/private.png','data:image/png;base64,YWJj']){const rejected=await f.request('/v1/responses',{...input,input:[{role:'user',content:[{type:'input_image',image_url}]}]},f.token,{'Idempotency-Key':requestId()});assert.equal(rejected.response.status,400);}
+ const pdf=await f.request('/v1/responses',{...input,input:[{role:'user',content:[{type:'input_file',file_data:'data:application/pdf;base64,JVBERg=='}]}]},f.token,{'Idempotency-Key':requestId()});assert.equal(pdf.response.status,400);assert.equal(mock.calls.length,1);assert.equal(f.store.user(f.user.id).reserved_micros,0);
+});
+test('channel draft permits optional notes but never silently confirms capabilities or prices',async t=>{
+ const f=await fixture(t);const mock=await upstream(t,(_req,res)=>reply(res));const id=f.store.setChannel(f.admin.id,{name:'new draft',base_url:mock.url+'/v1',api_key:'fixture-only-key',protocol:'chat',enabled:true,priority:1,timeout_ms:1000,concurrency:1,capabilities:{...caps,stream:false,tools:false},usage_schema:schema});f.store.setMapping(f.admin.id,id,'gcode-sol',{upstream_model:mock.model,enabled:true,verified:false,cost_price:null});f.configure();assert.equal(f.store.catalogue().find(x=>x.id==='gcode-sol').available,false);assert.equal(f.store.channels().find(x=>x.id===id).evidence,'未填写来源说明');
+ const script=await readFile(new URL('../scripts/local-test.mjs',import.meta.url),'utf8');assert(!script.includes('createServer'));assert(!script.includes('【本机模拟】'));assert(script.includes('UPDATE channels SET enabled=0'));
+});
+test('large image admission is bounded and releases after completion',async t=>{
+ const f=await fixture(t,{routeDeadline:5000});f.configure();let ready,finish;const arrived=new Promise(resolve=>ready=resolve),release=new Promise(resolve=>finish=resolve);t.after(()=>finish());const mock=await upstream(t,async(_req,res)=>{ready();await release;reply(res);});await f.channel(mock,{timeout_ms:4000,capabilities:{...caps,input:['text','image']}});
+ const bytes=Buffer.concat([Buffer.from(image.split(',')[1],'base64'),Buffer.alloc(2*1048576)]),input=body('gcode-sol',{messages:[{role:'user',content:[{type:'image_url',image_url:{url:'data:image/png;base64,'+bytes.toString('base64')}}]}]});const first=f.request('/v1/chat/completions',input,f.token,{'Idempotency-Key':requestId()});await arrived;const second=await f.request('/v1/chat/completions',input,f.token,{'Idempotency-Key':requestId()});assert.equal(second.response.status,429);assert.equal(second.data.error.code,'large_request_busy');finish();assert.equal((await first).response.status,200);const third=await f.request('/v1/chat/completions',input,f.token,{'Idempotency-Key':requestId()});assert.equal(third.response.status,200);assert.equal(f.store.user(f.user.id).reserved_micros,0);
+});

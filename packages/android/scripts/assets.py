@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from pathlib import Path
 import hashlib,json,zipfile,subprocess
+from release_config import release_configuration
 root=Path(__file__).resolve().parents[1]
 assets=root/'android/assets';assets.mkdir(parents=True,exist_ok=True)
 license_dir=root/'build/licenses';license_dir.mkdir(parents=True,exist_ok=True)
@@ -28,8 +29,10 @@ for directory in ['src','web','node_modules']:
   if any(p.startswith(('linux-','darwin-','win32-')) for p in parts) and file.suffix in ['.node','.so','.dll','.exe']:continue
   files.append((file,relative.as_posix()))
 files.extend((file,'licenses/'+file.name) for file in license_dir.iterdir() if file.is_file())
+release=release_configuration(root)
 archive=assets/'engine.zip'
 with zipfile.ZipFile(archive,'w',zipfile.ZIP_DEFLATED,compresslevel=6) as zip:
+ zip.writestr('config/platform.json',json.dumps(release,ensure_ascii=False))
  for file,relative in sorted(files):zip.write(file,relative)
 with zipfile.ZipFile(archive) as zip:assert zip.testzip() is None
 (assets/'engine.sha256').write_text(hashlib.sha256(archive.read_bytes()).hexdigest()+'\n')

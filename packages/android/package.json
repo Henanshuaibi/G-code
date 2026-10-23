@@ -1,6 +1,6 @@
 {
   "name": "@opencode/android-port",
-  "version": "0.13.0",
+  "version": "0.19.0",
   "private": true,
   "type": "module",
   "description": "Unofficial Android port of OpenCode",
@@ -9,7 +9,7 @@
     "diff": "8.0.4"
   },
   "scripts": {
-    "test": "sh scripts/config-check.sh && sh scripts/control-check.sh && node scripts/profiles-check.mjs && node scripts/device-check.mjs && node scripts/run-state-check.mjs && node scripts/request-check.mjs && node scripts/render-check.mjs && node scripts/state-check.mjs && node scripts/appearance-check.mjs && node scripts/attachments-check.mjs && node scripts/video-download-check.mjs && node scripts/media-check.mjs && node scripts/admission-check.mjs && node scripts/engine-smoke.mjs",
+    "test": "python3 scripts/release-config-check.py && sh scripts/config-check.sh && sh scripts/control-check.sh && node scripts/profiles-check.mjs && node scripts/device-check.mjs && node scripts/run-state-check.mjs && node scripts/request-check.mjs && node scripts/render-check.mjs && node scripts/state-check.mjs && node scripts/appearance-check.mjs && node scripts/attachments-check.mjs && node scripts/video-download-check.mjs && node scripts/media-check.mjs && node scripts/admission-check.mjs && node scripts/engine-smoke.mjs && node scripts/session-actions-check.mjs && node scripts/platform-ui-check.mjs && node scripts/admin-ui-check.mjs && node scripts/platform-account-check.mjs && node scripts/platform-check.mjs",
     "build": "sh build.sh"
   }
 }

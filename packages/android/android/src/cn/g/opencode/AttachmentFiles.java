@@ -39,8 +39,8 @@ final class AttachmentFiles {
             else if((mime.startsWith("image/")&&!mime.equals("image/svg+xml"))||lower.matches(".*\\.(jpe?g|png|gif|webp|heic|heif|avif|bmp)$"))photo(resolver,uri,target,info,progress);
             else{progress.update("正在复制 "+name);copyBytes(resolver,uri,target,10*1048576L);info.put("size",target.length());}
             Files.write(metadata.toPath(),info.toString().getBytes(StandardCharsets.UTF_8));return info;
-        }catch(OutOfMemoryError e){target.delete();metadata.delete();ProjectFiles.remove(frames);throw new IOException("照片或视频解码占用过大，请选择较小的文件");}
-        catch(Exception e){target.delete();metadata.delete();ProjectFiles.remove(frames);throw new IOException(name+"："+(e instanceof SecurityException?"读取授权已失效，请重新选择":e.getMessage()==null?"系统无法读取此文件":e.getMessage()),e);}
+        }catch(OutOfMemoryError e){target.delete();new File(directory,id+".thumb").delete();metadata.delete();ProjectFiles.remove(frames);throw new IOException("照片或视频解码占用过大，请选择较小的文件");}
+        catch(Exception e){target.delete();new File(directory,id+".thumb").delete();metadata.delete();ProjectFiles.remove(frames);throw new IOException(name+"："+(e instanceof SecurityException?"读取授权已失效，请重新选择":e.getMessage()==null?"系统无法读取此文件":e.getMessage()),e);}
         finally{source.delete();}
     }
     private static void copyBytes(ContentResolver resolver,Uri uri,File target,long max)throws Exception{
@@ -59,12 +59,16 @@ final class AttachmentFiles {
             try(InputStream input=resolver.openInputStream(uri)){if(input!=null)bitmap=BitmapFactory.decodeStream(input,null,options);}if(bitmap==null)throw new IOException("照片解码失败，请换成 JPEG 或 PNG 后重试");
             Matrix matrix=new Matrix();switch(orientation){case 2:matrix.setScale(-1,1);break;case 3:matrix.setRotate(180);break;case 4:matrix.setScale(1,-1);break;case 5:matrix.setRotate(90);matrix.postScale(-1,1);break;case 6:matrix.setRotate(90);break;case 7:matrix.setRotate(-90);matrix.postScale(-1,1);break;case 8:matrix.setRotate(-90);break;default:break;}
             if(!matrix.isIdentity()){Bitmap rotated=Bitmap.createBitmap(bitmap,0,0,bitmap.getWidth(),bitmap.getHeight(),matrix,true);if(rotated!=bitmap){bitmap.recycle();bitmap=rotated;}}
-            boolean alpha=bitmap.hasAlpha()&&"image/png".equals(options.outMimeType);String format=alpha?"image/png":"image/jpeg";writeBitmap(bitmap,target,alpha);
+            boolean alpha=bitmap.hasAlpha()&&"image/png".equals(options.outMimeType);String format=alpha?"image/png":"image/jpeg";writeBitmap(bitmap,target,alpha);writeThumbnail(bitmap,new File(target.getParentFile(),target.getName().replace(".data",".thumb")));
             if(target.length()>10*1048576L){writeBitmap(bitmap,target,false);format="image/jpeg";}
             if(target.length()>10*1048576L)throw new IOException("处理后的照片仍过大，请先裁剪后重试");
             String original=info.optString("name"),base=original.replaceFirst("(?i)\\.[a-z0-9]{1,8}$","");String note="已在本机缩放为 "+bitmap.getWidth()+"×"+bitmap.getHeight()+(format.endsWith("png")?" PNG":" JPEG");if("image/gif".equals(options.outMimeType))note+="；动画仅取首帧";
             info.put("originalName",original).put("name",base+(format.endsWith("png")?".png":".jpg")).put("mime",format).put("kind","image").put("size",target.length()).put("note",note);
         }finally{if(bitmap!=null)bitmap.recycle();}
+    }
+    private static void writeThumbnail(Bitmap bitmap,File target)throws Exception{
+        double ratio=Math.min(1d,512d/Math.max(bitmap.getWidth(),bitmap.getHeight()));Bitmap small=Bitmap.createScaledBitmap(bitmap,Math.max(1,(int)Math.round(bitmap.getWidth()*ratio)),Math.max(1,(int)Math.round(bitmap.getHeight()*ratio)),true);
+        try{writeBitmap(small,target,false);}finally{if(small!=bitmap)small.recycle();}
     }
     private static void writeBitmap(Bitmap bitmap,File file,boolean png)throws Exception{
         Bitmap flattened=null;try{Bitmap output=bitmap;if(!png&&bitmap.hasAlpha()){flattened=Bitmap.createBitmap(bitmap.getWidth(),bitmap.getHeight(),Bitmap.Config.ARGB_8888);Canvas canvas=new Canvas(flattened);canvas.drawColor(Color.WHITE);canvas.drawBitmap(bitmap,0,0,null);output=flattened;}try(OutputStream out=new FileOutputStream(file)){if(!output.compress(png?Bitmap.CompressFormat.PNG:Bitmap.CompressFormat.JPEG,82,out))throw new IOException("图片编码失败");}}finally{if(flattened!=null)flattened.recycle();}
@@ -76,7 +80,7 @@ final class AttachmentFiles {
             if(!frames.mkdirs())throw new IOException("无法准备视频抽帧目录");int count=(int)Math.min(8,Math.max(1,Math.ceil(duration/3000d)));JSONArray items=new JSONArray();long size=0;
             for(int i=0;i<count;i++){
                 long time=count==1?0:Math.round(i*(Math.max(0,duration-100d))/(count-1));progress.update("视频抽帧 "+(i+1)+"/"+count+"（不含音频）");Bitmap frame=null;
-                try{try{frame=retriever.getScaledFrameAtTime(time*1000,MediaMetadataRetriever.OPTION_CLOSEST,1280,1280);}catch(RuntimeException ignored){}if(frame==null)frame=retriever.getScaledFrameAtTime(time*1000,MediaMetadataRetriever.OPTION_CLOSEST_SYNC,1280,1280);if(frame==null)continue;File image=new File(frames,i+".jpg");writeBitmap(frame,image,false);if(image.length()>10*1048576L)throw new IOException("视频帧过大");size+=image.length();if(size>20*1048576L)throw new IOException("视频抽帧结果过大，请选较短的视频");items.put(new JSONObject().put("file",image.getName()).put("timeMs",time));if(items.length()==1)Files.copy(image.toPath(),target.toPath());}
+                try{try{frame=retriever.getScaledFrameAtTime(time*1000,MediaMetadataRetriever.OPTION_CLOSEST,1280,1280);}catch(RuntimeException ignored){}if(frame==null)frame=retriever.getScaledFrameAtTime(time*1000,MediaMetadataRetriever.OPTION_CLOSEST_SYNC,1280,1280);if(frame==null)continue;File image=new File(frames,i+".jpg");writeBitmap(frame,image,false);if(image.length()>10*1048576L)throw new IOException("视频帧过大");size+=image.length();if(size>20*1048576L)throw new IOException("视频抽帧结果过大，请选较短的视频");items.put(new JSONObject().put("file",image.getName()).put("timeMs",time));if(items.length()==1){Files.copy(image.toPath(),target.toPath());writeThumbnail(frame,new File(target.getParentFile(),target.getName().replace(".data",".thumb")));}}
                 finally{if(frame!=null)frame.recycle();}
             }
             if(items.length()==0)throw new IOException("系统无法从该视频读取画面，请转成 MP4 后重试");info.put("kind","video").put("mime","video/mp4").put("durationMs",duration).put("frames",items).put("size",size).put("sourceSize",source.length()).put("note","视频抽帧 · "+items.length()+" 张画面 · 不含音频");

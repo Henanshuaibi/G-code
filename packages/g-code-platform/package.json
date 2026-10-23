@@ -1,0 +1,17 @@
+{
+  "name": "@opencode/g-code-platform",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=24.0.0 <27"
+  },
+  "scripts": {
+    "start": "node --env-file-if-exists=.env src/main.mjs",
+    "migrate": "node --env-file-if-exists=.env src/cli.mjs migrate",
+    "admin": "node --env-file-if-exists=.env src/cli.mjs admin",
+    "test": "node --test --test-concurrency=1 test/*.test.mjs",
+    "test-service": "node scripts/local-test.mjs"
+  }
+}

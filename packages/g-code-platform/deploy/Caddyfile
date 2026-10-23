@@ -1,0 +1,10 @@
+# Replace domain; keep the Node service private on 127.0.0.1.
+gcode.example.com {
+    request_body {
+        max_size 2MB
+    }
+    reverse_proxy 127.0.0.1:8787 {
+        flush_interval -1
+    }
+    # Access logging is deliberately not enabled. Never log bodies, cards or Authorization.
+}

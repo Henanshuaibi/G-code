@@ -1,0 +1,72 @@
+{
+  "version": "0.18",
+  "package": "cn.g.opencode",
+  "abi": "arm64-v8a",
+  "minSdk": 30,
+  "upstreamSdk": "2.0.32",
+  "build": "passed",
+  "signature": "Original cn.g.opencode signing identity; APK v3 and zipalign verified",
+  "apkBytes": 73270706,
+  "apkSha256": "7df4698d8c294e4805ccb72e20e73835b61733654af5d42182d1eb125428615d",
+  "platform": {
+    "backendTests": 31,
+    "backendTestsPassed": true,
+    "mockRoutesRetired": true,
+    "demoPricesRemoved": true,
+    "ownerAccountAndLedgerPreserved": true,
+    "localService": "http://127.0.0.1:8787",
+    "localServiceHealth": 200,
+    "realSdkChatAndResponsesImageBytesPassed": true,
+    "imageCapabilityRoutingPassed": true,
+    "actualUsageBillingPassed": true,
+    "largeImageConcurrencyBoundPassed": true,
+    "realSolMapping": "disabled, unpriced, unverified draft from previously observed model metadata",
+    "latestRealMetadataRefresh": "ECONNREFUSED; no inference attempted",
+    "realCapabilitiesAndPricesVerified": false,
+    "paidTestsRun": false,
+    "productionDeployed": false
+  },
+  "performance": {
+    "historyPageDefault": 40,
+    "unchangedHistoryReturnsMetadataOnly": true,
+    "immutableHistorySerializationCheck": "100 refreshes, 1 serialization",
+    "projectSnapshot": "one text file encoded and written at a time",
+    "newImagePreviewMaxEdge": 512,
+    "modelImageBytesPreserved": true,
+    "eventSubscriptionFailureFallsBackToReads": true,
+    "finalFixtureMetrics": [
+      "METRICS history_bytes 25051 unchanged_bytes 154",
+      "METRICS engine_memory VmSize:\t20620464 kB; VmHWM:\t  335376 kB; VmRSS:\t  325432 kB"
+    ],
+    "memoryMeasurementScope": "Node engine process in controlled SDK fixture, not Android app/WebView total and not a before/after memory comparison"
+  },
+  "checks": {
+    "sourceFullRegression": "passed; final isolated tests include subsequent event-subscription fallback change",
+    "finalApkIsolatedEngine": "passed, 36 simulated model requests",
+    "finalApkBundledRuntimePlatformSdk": "passed, Chat/Responses images + tools + billing",
+    "finalApkProductionUiFunctions": "passed, render/model picker/deletion HTML tree tests",
+    "adminProductionForms": "passed with HTML tree and HTTP boundary fixture",
+    "packageIntegrity": "passed",
+    "rootBunCheck": "unavailable: bun: Permission denied",
+    "knownSecretArchiveScan": "passed: encrypted upstream key decoded only in process memory, signing password and master-key material absent; private paths excluded"
+  },
+  "notVerified": [
+    "Real upstream inference, vision quality, usage contract, pricing or billing reconciliation",
+    "Android WebView touch/scroll FPS, total app memory, native photo picker/thumbnail decoding",
+    "Public network, production deployment and real browser administration"
+  ],
+  "evidence": [
+    "build/platform-backend-0.18.log",
+    "build/platform-source-0.18.log",
+    "build/admin-ui-0.18.log",
+    "build/platform-final-engine-0.18.log",
+    "build/platform-final-sdk-0.18.log",
+    "build/platform-final-render-0.18.log",
+    "build/platform-final-ui-0.18.log",
+    "build/platform-final-delete-0.18.log",
+    "build/platform-package-check-0.18.log",
+    "build/platform-build-0.18.log",
+    "build/root-check-0.18.log"
+  ],
+  "previousReleaseVerification": "VERIFICATION-0.17.json"
+}

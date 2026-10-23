@@ -4,3 +4,8 @@ tools/
 android/assets/
 *.apk
 *.zip
+
+platform-release.json
+.env
+.env.*
+!.env.example

@@ -1,8 +1,8 @@
 from pathlib import Path
-import hashlib,io,json,re,subprocess,zipfile,xml.etree.ElementTree as E
-root=Path(__file__).resolve().parents[1];apk=root/'build/G-code-0.13.apk';ns='{http://schemas.android.com/apk/res/android}'
+import hashlib,io,json,os,re,subprocess,zipfile,xml.etree.ElementTree as E
+root=Path(__file__).resolve().parents[1];apk=root/'build/G-code-0.19.apk';ns='{http://schemas.android.com/apk/res/android}'
 manifest=E.parse(root/'android/AndroidManifest.xml').getroot()
-assert manifest.attrib['package']=='cn.g.opencode' and manifest.attrib[ns+'versionCode']=='13'
+assert manifest.attrib['package']=='cn.g.opencode' and manifest.attrib[ns+'versionCode']=='19'
 assert manifest.find('uses-sdk').attrib[ns+'minSdkVersion']=='30'
 assert manifest.find('application').attrib[ns+'extractNativeLibs']=='true'
 assert manifest.find('application').attrib[ns+'allowBackup']=='false'
@@ -31,14 +31,18 @@ with zipfile.ZipFile(apk) as archive:
  content=archive.read('assets/engine.zip');assert hashlib.sha256(content).hexdigest()==archive.read('assets/engine.sha256').decode().strip()
  with zipfile.ZipFile(io.BytesIO(content)) as bundle:
   assert bundle.testzip() is None
-  for file in ['src/server.mjs','src/engine.mjs','src/chatgpt.mjs','src/pty.cjs','src/device.mjs','src/run-state.mjs','src/profiles.mjs','src/media.mjs','src/video-download.mjs','src/attachments.mjs','src/http-body.mjs','web/index.html','web/app.js','web/request.js','web/drafts.js','web/usage.js','web/render-cache.js','web/appearance.js','web/style.css']:assert bundle.read(file)==(root/file).read_bytes(),file
+  for file in ['src/server.mjs','src/engine.mjs','src/model-options.mjs','src/chatgpt.mjs','src/platform.mjs','src/pty.cjs','src/device.mjs','src/run-state.mjs','src/profiles.mjs','src/media.mjs','src/video-download.mjs','src/attachments.mjs','src/http-body.mjs','web/index.html','web/app.js','web/request.js','web/drafts.js','web/usage.js','web/render-cache.js','web/appearance.js','web/style.css']:assert bundle.read(file)==(root/file).read_bytes(),file
   assert json.loads(bundle.read('node_modules/@opencode/sdk/package.json'))['version']=='2.0.32'
   assert 'licenses/OpenCode-LICENSE' in bundle.namelist()
+  public=json.loads(bundle.read('config/platform.json'));assert set(public) in ({'base_url'},{'base_url','local_test'})
+  from release_config import release_configuration
+  assert public==release_configuration(root,{'GCODE_PLATFORM_URL':public['base_url'],'GCODE_LOCAL_TEST':'true' if public.get('local_test') else 'false'})
+  if os.environ.get('GCODE_PLATFORM_URL') or (root/'platform-release.json').exists():assert public==release_configuration(root)
   for name in ['src/server.mjs','src/engine.mjs','web/app.js','web/index.html']:assert secret not in bundle.read(name) and b'test-api-key-not-real' not in bundle.read(name)
  for runtime in json.loads((root/'build/runtime-manifest.json').read_text()):
   name='lib/arm64-v8a/'+runtime['file'];assert hashlib.sha256(archive.read(name)).hexdigest()==runtime['sha256']
 badging=subprocess.check_output(['aapt2','dump','badging',str(apk)],text=True)
-assert "package: name='cn.g.opencode' versionCode='13' versionName='0.13'" in badging
+assert "package: name='cn.g.opencode' versionCode='19' versionName='0.19'" in badging
 assert "application-label:'G code'" in badging and "native-code: 'arm64-v8a'" in badging
 subprocess.run(['apksigner','verify','--verbose',str(apk)],check=True)
 subprocess.run(['zipalign','-c','4',str(apk)],check=True)

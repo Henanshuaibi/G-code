@@ -7,7 +7,7 @@ export class ChatGPTAccount {
     this.available=info.methods.some(item=>item.id==='chatgpt-token-sharing');
     this.connections=info.connections.filter(item=>item.type==='credential'&&item.method==='oauth');
     const models=this.connections.length?(await this.sdk.model.list(this.location)).data:[];
-    this.models=models.filter(item=>item.providerID==='openai'&&item.enabled!==false).map(item=>item.id);
+    this.modelDetails=models.filter(item=>item.providerID==='openai'&&item.enabled!==false);this.models=this.modelDetails.map(item=>item.id);
     return this.status();
   }
   status(){return {available:this.available,connected:!!this.connections.length,models:this.models,attempt:this.attempt,accounts:this.connections.map(item=>({id:item.id,label:item.label,status:item.status?.status}))};}

@@ -1,0 +1,23 @@
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import path from 'node:path';
+import {pathToFileURL} from 'node:url';
+import {runInNewContext} from 'node:vm';
+import {Element,Text} from 'domhandler';
+import {appendChild,removeElement,textContent} from 'domutils';
+const root=process.env.OPENCODE_TEST_ENTRY?path.dirname(path.dirname(process.env.OPENCODE_TEST_ENTRY)):path.resolve('.'),source=await readFile(path.join(root,'web/app.js'),'utf8');
+const {deleteSelected}=await import(pathToFileURL(path.join(root,'web/usage.js')));
+function node(tag,value=''){const item=new Element(tag,{});item.isConnected=true;item.append=(...children)=>children.forEach(child=>appendChild(item,child));item.replaceChildren=(...children)=>{for(const child of [...item.children])removeElement(child);item.append(...children);};item.setAttribute=(key,value)=>{item.attribs[key]=String(value);};Object.defineProperty(item,'textContent',{get:()=>textContent(item),set:value=>item.replaceChildren(new Text(value))});if(value)item.textContent=value;return item;}
+const nodes=new Map();const $=id=>{if(!nodes.has(id))nodes.set(id,node('section'));return nodes.get(id);};
+const records=new Map(['a','b','c','child'].map(id=>[id,{id,title:'对话 '+id,...(id==='child'?{parentID:'a'}:{})}])),saved=new Map(['a','b','c'].flatMap(id=>['draft:','attachments:','attachment-job:'].map(key=>[key+id,'keep '+id]))),calls=[],failures=new Set();let panel,sheetCount=0,notice='',opened=0,stopped=0;
+const state={session:'a',project:'原项目',sessionRows:'',sessionSelecting:false,selectedSessions:new Set(),sessionItems:[],deletingSessions:new Set(),batchDeleting:false};
+const context={Date,JSON,Set,state,$,lastSessionRefresh:0,text:node,button:(label,action,cls='')=>Object.assign(node('button',label),{click:action,className:cls}),document:{createElement:node},titleOf:item=>item.title,usageLabel:()=>'',sessionActions:()=>{},selectSession:()=>opened++,storage:{removeItem:key=>saved.delete(key)},clearSession:()=>{state.session='';},selectTab:async()=>{},native:{phoneStop:()=>stopped++},toast:value=>{notice=value;},sheet:()=>{sheetCount++;return panel=node('section');},closeSheet:()=>{},deleteSelected,rpc:async(action,input)=>{if(action==='sessions')return {data:[...records.values()]};if(action==='deleteSession'){calls.push(input.sessionID);if(failures.has(input.sessionID))throw new Error('mock deletion rejected');records.delete(input.sessionID);return {};}throw new Error('Unexpected RPC');}};
+const fragment=(start,end)=>source.slice(source.indexOf(start),source.indexOf(end,source.indexOf(start)));
+runInNewContext(fragment('async function sessions(){','function clearSession()')+fragment('function forgetSession(','function about()'),context);
+await context.sessions();assert.equal($('sessionList').children.length,3);const row=id=>$('sessionList').children.find(item=>textContent(item).includes('对话 '+id));
+await row('b').children.find(item=>item.className?.includes('sessionDelete')).click();assert.deepEqual(calls,['b']);assert.equal(sheetCount,0,'Single deletion must not open menus or confirmation');assert.equal(state.session,'a');assert.equal(state.project,'原项目');assert(!saved.has('draft:b'));assert(saved.has('draft:c'));
+failures.add('c');await assert.rejects(row('c').children.find(item=>item.className?.includes('sessionDelete')).click(),/rejected/);assert(saved.has('draft:c'));assert(records.has('c'));
+await context.batchSessions();assert.equal($('sessionBatch').hidden,false);assert.equal(sheetCount,0,'Batch selection happens directly in sidebar');await context.selectAllSessions();assert.deepEqual([...state.selectedSessions].sort(),['a','c']);
+const before=calls.length;context.confirmSessionDeletion();assert.equal(sheetCount,1);assert.equal(calls.length,before,'Batch needs one explicit final confirmation');await panel.children.find(item=>item.name==='button'&&textContent(item)==='确认删除').click();assert.deepEqual(calls.slice(before),['a','c']);assert(!saved.has('draft:a'));assert(saved.has('draft:c'));assert.equal(stopped,0);assert.equal(state.session,'');assert.equal(state.project,'原项目');assert.match(notice,/成功删除 1 段，失败 1 段/);assert.equal(sheetCount,1,'No second result dialog');assert.deepEqual([...state.selectedSessions],['c']);assert.equal(row('c').children[0].disabled,false,'Failed selection can be retried');assert.equal(opened,0);
+await context.batchSessions();assert.equal($('sessionBatch').hidden,true);assert.equal(state.selectedSessions.size,0);
+console.log('PASS: production sidebar one-click single delete, failed deletion preserves drafts, in-place batch selection/all, one final confirmation, mixed results, failed retry, project and unselected records preserved');
